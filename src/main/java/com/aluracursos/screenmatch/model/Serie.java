@@ -1,27 +1,50 @@
 package com.aluracursos.screenmatch.model;
 
-import java.util.OptionalDouble;
+import com.aluracursos.screenmatch.service.ConsultaChatGPT;
+import jakarta.persistence.*;
 
+import java.util.List;
+import java.util.OptionalDouble;
+@Entity
+@Table(name = "series")
 public class Serie {
- private String titulo;
- private Integer totalTemporadas;
- private Double evaluacion;
- private String poster;
- private Categoria genero;
- private String actores;
- private String sinopsis;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long Id;
+    @Column(unique = true)
+     private String titulo;
+     private Integer totalTemporadas;
+     private Double evaluacion;
+     private String poster;
+     @Enumerated(EnumType.STRING)
+     private Categoria genero;
+     private String actores;
+     private String sinopsis;
+     @Transient
+     private List<Episodio> episodios;
+
+     public Serie() {}
 
  public Serie(DatosSerie datosSerie) {
-  this.titulo = datosSerie.titulo();
-  this.totalTemporadas = datosSerie.totalTemporadas();
-  this.evaluacion = OptionalDouble.of(Double.valueOf(datosSerie.evaluacion())).orElse(0);
-  this.poster = datosSerie.poster();
-  this.genero = Categoria.fromString(datosSerie.genero().split(",")[0].trim());
-  this.actores = datosSerie.actores();
-  this.sinopsis = datosSerie.sinopsis();
+      this.titulo = datosSerie.titulo();
+      this.totalTemporadas = datosSerie.totalTemporadas();
+      this.evaluacion = OptionalDouble.of(Double.valueOf(datosSerie.evaluacion())).orElse(0);
+      this.poster = datosSerie.poster();
+      this.genero = Categoria.fromString(datosSerie.genero().split(",")[0].trim());
+      this.actores = datosSerie.actores();
+      //this.sinopsis = ConsultaChatGPT.obtenerTraduccion(datosSerie.sinopsis());
+      this.sinopsis = datosSerie.sinopsis();
  }
 
- public String getTitulo() {
+    public Long getId() {
+        return Id;
+    }
+
+    public void setId(Long id) {
+        Id = id;
+    }
+
+    public String getTitulo() {
   return titulo;
  }
 
@@ -58,7 +81,7 @@ public class Serie {
  }
 
  public void setGenero(Categoria genero) {
-  this.genero = genero;
+      this.genero = genero;
  }
 
  public String getActores() {
@@ -77,14 +100,14 @@ public class Serie {
   this.sinopsis = sinopsis;
  }
 
-    @Override
-    public String toString() {
-        return  "  genero= '" + genero + '\'' +
-                ", titulo= '" + titulo + '\'' +
-                ", totalTemporadas= '" + totalTemporadas + '\'' +
-                ", evaluacion= '" + evaluacion + '\'' +
-                ", poster= '" + poster + '\'' +
-                ", actores= '" + actores + '\'' +
-                ", sinopsis= '" + sinopsis + '\'';
-    }
+ @Override
+ public String toString() {
+      return  "  genero= '" + genero + '\'' +
+              ", titulo= '" + titulo + '\'' +
+              ", totalTemporadas= '" + totalTemporadas + '\'' +
+              ", evaluacion= '" + evaluacion + '\'' +
+              ", poster= '" + poster + '\'' +
+              ", actores= '" + actores + '\'' +
+              ", sinopsis= '" + sinopsis + '\'';
+     }
 }
